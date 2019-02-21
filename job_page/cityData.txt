@@ -1,0 +1,16 @@
+[{"jobClass":"开发-运维","profeAreaList":[{"city":"济南","count":10},{"city":"厦门","count":33},{"city":"宁波","count":3},{"city":"重庆","count":24},{"city":"东莞","count":9},{"city":"无锡","count":5},{"city":"绵阳","count":1},{"city":"长春","count":2},{"city":"合肥","count":18},{"city":"天津","count":15},{"city":"珠海","count":16},{"city":"青岛","count":10},{"city":"大连","count":11},{"city":"杭州","count":251},{"city":"福州","count":11},{"city":"成都","count":165},{"city":"上海","count":545},{"city":"兰州","count":4},{"city":"长沙","count":30},{"city":"镇江","count":2},{"city":"乌鲁木齐","count":1},{"city":"武汉","count":105},{"city":"深圳","count":423},{"city":"海外","count":5},{"city":"广州","count":293},{"city":"西安","count":42},{"city":"郑州","count":15},{"city":"太原","count":3},{"city":"北京","count":723},{"city":"南京","count":59},{"city":"佛山","count":8},{"city":"苏州","count":24}]},{"jobClass":"市场-售后","profeAreaList":[{"city":"成都","count":69},{"city":"上海","count":182},{"city":"济南","count":6},{"city":"重庆","count":13},{"city":"常州","count":2},{"city":"武汉","count":33},{"city":"深圳","count":190},{"city":"贵阳","count":8},{"city":"广州","count":181},{"city":"天津","count":11},{"city":"郑州","count":18},{"city":"杭州","count":104},{"city":"北京","count":269},{"city":"南京","count":24}]}]
+
+
+
+///////////////////
+
+[{"id":133,"salary":"10k-20k","jobName":"java工程师","company":"北京科码先锋软件技术有限公司","location":"武汉","experience":"经验3-5年","education":"本科及以上"},{"id":136,"salary":"8k-15k","jobName":"java开发工程师","company":"武汉佰钧成技术有限责任公司","location":"武汉","experience":"经验3-5年","education":"本科及以上"},{"id":142,"salary":"10k-16k","jobName":"java开发工程师","company":"武汉融智盛维科技发展有限公司","location":"武汉","experience":"经验3-5年","education":"本科及以上"},{"id":180,"salary":"6k-10k","jobName":"java开发工程师","company":"武汉佰钧成技术有限责任公司","location":"武汉","experience":"经验1-3年","education":"本科及以上"},{"id":219,"salary":"16k-25k","jobName":"java开发工程师","company":"武汉海云健康科技股份有限公司","location":"武汉","experience":"经验5-10年","education":"本科及以上"},{"id":272,"salary":"6k-12k","jobName":"java工程师","company":"上海有点信息科技有限公司","location":"武汉","experience":"经验3-5年","education":"本科及以上"},{"id":316,"salary":"10k-20k","jobName":"java开发","company":"武汉佰钧成技术有限责任公司","location":"武汉","experience":"经验5-10年","education":"本科及以上"},{"id":40,"salary":"15k-30k","jobName":"java开发工程师","co
+
+
+////////////////////////////////////
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.13.4/dist/bootstrap-table.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://unpkg.com/bootstrap-table@1.13.4/dist/bootstrap-table.min.js"></script>
+<!-- Latest compiled and minified Locales -->
+<script src="https://unpkg.com/bootstrap-table@1.13.4/dist/locale/bootstrap-table-zh-CN.min.js"></script>

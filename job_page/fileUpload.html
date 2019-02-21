@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>文件上传</title>
+	<script src="js/ip.js"></script>
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript">
+		function uploadFile(){
+			var file=document.getElementById("fileSelected").files[0];
+			var path=document.getElementById("fileSelected").value;
+			//var fileName=document.getElementById("fileName").value;
+			var filePath=document.getElementById("filePath").value;
+			var fileId=document.getElementById("id").value;
+			console.log(file);
+			console.log(path);
+			console.log(filePath);
+			console.log(fileId);
+			//console.log(fileName);
+			var name=file.name;		
+			var formData=new FormData();
+			//formData.append("fileName",fileName);
+			formData.append("file",file);
+			formData.append("path",filePath);
+			formData.append("id",fileId);
+			
+			$.ajax({
+				"url":defaultIp+"/file/upload",
+				"type":"post",
+				"data":formData,
+				"dataType":"text",
+				"contentType":false,
+				"processData":false,
+				"success":function(result){
+					/**
+					if(result.status=="true"){
+						alert("上传成功");
+					}else if(result.status=="error"){
+						alert("上传失败");
+					}
+					*/
+					alert(result);
+				},
+				"error":function(result){
+					alert("上传失败");
+				},
+				"xhr":function(){
+					var xhr=$.ajaxSettings.xhr();
+					if(onprogress&&xhr.upload){
+						xhr.upload.addEventListener("progress" , onprogress, false);
+　　　　　　　　			return xhr;
+					}
+				}
+			});
+			
+			
+		}
+		function onprogress(evt){
+			var loaded = evt.loaded;                  //已经上传大小情况 
+		   	var tot = evt.total;    
+		   	var percent = Math.floor(100*loaded/tot);     //已经上传的百分比      
+            $("#progressBar").value=percent;                     
+		}
+	</script>
+</head>
+<body>
+<form action="" method="post" enctype="multipart/form-data">
+    <input type="file" id="fileSelected" name="file" />
+    <br>
+	<!--
+    <br>
+    <input type="text" id="fileName" name="fileName" placeholder="请输入文件名" />
+    <br>
+	-->
+    <br>
+    <input type="text" id="filePath" name="path" placeholder="请输入路径" />
+    <br>
+	
+    <br>
+    <input type="text" id="id" name="id" placeholder="请输入id"></input>
+    <br>
+    <br>
+    <input type="button" id="upload" onclick="uploadFile()" value="上传文件" />
+    <br>
+    <br>
+    <progress value="0" max="100" id="progressBar"></progress>
+    </form>
+</body>
+</html>

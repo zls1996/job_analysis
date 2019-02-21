@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>职位发布区域分析</title>
+	<script src="js/echarts.min.js"></script>
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<script src="js/ip.js"></script>
+	<style type="text/css" media="screen">
+	body {
+        background-image: url('./images/pie_back.jpg');
+        width: 100%;
+        height: 100%;
+        background-repeat:no-repeat ;
+        background-size:100% 100%;
+        background-attachment: fixed;
+      }
+		#container{
+			height: auto;
+			width: 50%;
+			left: 25%;
+			right: 25%;
+			position: absolute;
+			border: 1px solid black;
+			background-color: #ffffff;
+			
+		}
+		#chartContainer{
+			width: 80%;
+			height: auto;
+			margin-left: 10%;
+			overflow-y: auto;
+		}
+		#page_title{
+			margin-top: 10%;
+			margin-bottom: 5%;
+			height: 10%;
+			width: 80%;
+			margin-left: 10%
+		}
+		#page_title p{
+			font-size: 40px;
+		}
+		.myChart{
+			width: 600px;
+			height: 300px;
+			margin-bottom: 100px;
+		}
+	</style>
+	<script type="text/javascript">
+		function generateChart(chartContainer,chartTitle,xData,yData){
+			console.log(chartContainer);
+			var myChart = echarts.init(document.getElementById(chartContainer));
+			var option = {
+				title: {                              
+	                text: chartTitle,                
+	                textStyle:{                 //---主标题内容样式    
+	                    color:'#000'
+	                }
+                },
+			    color: ['#3398DB'],
+			    tooltip : {
+			        trigger: 'axis',
+			        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+			            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+			        }
+			    },
+			    grid: {
+			        left: '3%',
+			        right: '4%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    xAxis : [
+			        {
+			            type : 'category',
+			            data : xData,
+			            axisTick: {
+			                alignWithLabel: true
+			            }
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value'
+			        }
+			    ],
+			    series : [
+			        {
+			            name:'直接访问',
+			            type:'bar',
+			            barWidth: '60%',
+			            data:yData
+			        }
+			    ]
+			};
+
+					myChart.setOption(option);
+		}
+		function generateDiv(dataList){
+			console.log(dataList);
+			var str="";
+			for(var id in dataList){
+				console.log(id);
+				str+="<div class=\"myChart\""+" id=\"chart"+id+"\"></div>"
+			}
+			console.log(str);
+			document.getElementById("chartContainer").innerHTML=str;
+		}
+		function parseResult(dataList){
+			for(var listIndex in dataList){
+				var title=dataList[listIndex]['jobClass'];
+				var cities=dataList[listIndex]['profeAreaList'];
+				cities.sort(function(a,b){
+					return b.count-a.count;
+				});
+				var xData=[];
+				var yData=[];
+				for(var cityIndex in cities){
+					if(cityIndex>5)break;
+					xData.push(cities[cityIndex]['city']);
+					yData.push(cities[cityIndex]['count']);					
+				}
+				generateChart("chart"+listIndex,title,xData,yData);
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="page_title">
+	        <div id="page_title_text" class="text ">
+          		<p><span></span><span>职位发布区域分析</span></p>
+        	</div>
+      	</div>
+      	<div id="chartContainer" align="center">
+			<script type="text/javascript">
+				var xData=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+				var yData=[10, 52, 200, 334, 390, 330, 220];
+				var dataList=['1','2','3'];
+				window.onload=function(){
+					$.ajax({
+						"url":defaultIp+"/professionareaanalysis",
+				        "type":"get",
+				        "dataType":"json",
+				        "success":function(result){
+				            //show
+				
+				            generateDiv(result);
+				            parseResult(result);
+				          },
+				        "error":function(result){
+				            console.log(result);
+				           
+				            /*
+				            generateChart("chart0","test",xData,yData);
+				            generateChart("chart1","test",xData,yData);
+				            generateChart("chart2","test",xData,yData);
+				            */
+
+				            //alert("获取数据失败!");
+				        }
+					});
+				}
+		</script>
+	</div>
+	</div>
+</body>
+</html>

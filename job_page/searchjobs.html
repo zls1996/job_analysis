@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>职位搜索</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link href="css/searchStyles.css" type="text/css" rel="stylesheet"/>
+    <script src="css/bootstrap.min.js"></script>
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/ip.js"></script>
+    <!--
+    for bootstrap table
+    -->
+    <link rel="stylesheet" href="css/bootstrap4.css" />
+    <link rel="stylesheet" href="css/bootstrap-table.css" />  
+    <script src="js/bootstrap.js"></script> 
+    <script src="js/bootstrap-table.js"></script>
+    <script type="text/javascript" src="js/bootstrap-table-zh-CN.js"></script>
+
+    <script type="text/javascript">
+      function clearAllInput(){
+        document.getElementById("search_input").value="";
+        document.getElementById("pos_input").value="";
+        document.getElementById("education").value="请选择学历";
+        document.getElementById("showResult").innerHTML="";
+      }
+
+      function showSearchResult(dataList){
+        var result="";
+        result+='<table id="resultTable" border="1">';
+        result+='<tr><th>职位名称</th><th>区域</th><th>学历要求</th></tr>';
+        for(var id in dataList){          
+          var name=dataList[id]['jobName'];
+          var area=dataList[id]['location'];
+          var edu=dataList[id]['education'];
+          var str='<tr><td>'+name+'</td><td>'+area+'</td><td>'+edu+'</td></tr>';
+          result+=str;
+        }
+        //show json result
+
+        result+='</table>';
+        document.getElementById("showResult").innerHTML=result;
+      }
+
+      function showResultWithBootstrap(dataList){
+        var result="";
+        result+='<table id="resultTable"> </table>';      
+        document.getElementById("showResult").innerHTML=result;
+        var dataToShow=[];
+        
+        for(var id in dataList){          
+          var name=dataList[id]['jobName'];
+          var area=dataList[id]['location'];
+          var edu=dataList[id]['education'];  
+          dataToShow[id]={"name":name,"area":area,"education":edu};
+        }
+        
+        $(function () {
+          $('#resultTable').bootstrapTable({
+            method: 'get',
+            cache: false,
+            height: 600,
+            striped: true,
+            pagination: true,
+            pageSize: 6,
+            pageNumber:1,
+            pageList: [6, 12, 24, 30],
+            sidePagination:'client',
+            search: true,
+            showColumns: false,
+            showRefresh : false, // 是否显示刷新按钮
+            showExport: false,
+            search: true,
+            clickToSelect: false,
+            columns: 
+            [
+              {field:"checked",checkbox:true},
+              {field:"name",title:"职位名称",align:"center",valign:"middle",sortable:"true"},
+              {field:"area",title:"区域",align:"center",valign:"middle",sortable:"true"},
+              {field:"education",title:"学历",align:"center",valign:"middle",sortable:"true"},
+            ],
+            data:dataToShow,
+          });                   
+        }); 
+      }
+
+      function search(){
+        var job=document.getElementById("search_input").value;
+        var position=document.getElementById("pos_input").value;
+        var education=document.getElementById("education").value;
+        if(job==""){
+          alert("请输入职位!");
+          return;
+        }
+        if(position==""){
+          alert("请输入区域!");
+          return;
+        }
+        if(education=="请选择学历"){
+          alert("请选择学历!");
+          return;
+        }
+        var dataToSend={};
+        dataToSend["jobname"]=job;
+        dataToSend["area"]=position;
+        dataToSend["edu"]=education;
+        $.ajax({
+          "url":defaultIp+"/jobinfo/search",
+          "type":"post",
+          "dataType":"json",
+          "data":dataToSend,
+          "success":function(result){
+            //show
+            //showSearchResult(result);
+            showResultWithBootstrap(result);
+          },
+          "error":function(result){
+            console.log("查询失败!");
+            alert("查询失败!");
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="container" align="center">
+      <script type="text/javascript">
+        window.onload=function(){
+          search();
+        }
+      </script>
+      <div id="page_title">
+        <img id="page_title_img" class="img " src="images/search.png"/>
+        <div id="page_title_text" class="text ">
+          <p><span></span><span>职位搜索</span></p>
+        </div>
+      </div>
+        <div id="search_panel" align="center">
+
+          <div id="panel_form" >  
+            <div id="search_text">
+              <input id="search_input" value="C" name="search_input" type="text" placeholder="请输入职位" />
+            </div>
+            <div id="select_pos">
+              <input id="pos_input" value="武汉" name="pos" type="text" placeholder="请输入地区">
+            </div>
+            <div id="select_edu">
+              <select id="education" name="education">
+                <option value="请选择学历">请选择学历</option>
+                <option value="大专">大专</option>
+                <option value="本科" selected="true">本科</option>
+                <option value="硕士">硕士</option>
+                <option value="博士">博士</option>
+              </select>
+            </div>
+            <div id="search">
+              <input type="button" class="" id="search_button" onclick="search()" value="查询"/>
+            </div>
+
+            <div id="clear">
+              <button type="button" id="clear_button" onclick="clearAllInput()">重置</button>
+            </div>
+          </div>
+        </div> 
+
+        <div id="showResult" align="center">
+          
+        </div>    
+    </div>
+  </body>
+</html>

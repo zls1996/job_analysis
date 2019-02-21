@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>注册</title>
+    <meta charset="utf-8"/>
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <style type="text/css" media="screen">
+      body {
+        margin:0px;
+        background-image: url('./images/back.jpg');
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background-repeat:no-repeat ;
+        background-size:100% 100%;
+        background-attachment: fixed;
+      }
+      #container {
+        height: 100%;
+        width: 100%;
+        margin-top: 0px;
+      }
+      #header {
+        border-width:0px;
+        width:100%;
+        height:66px;
+        font-size:28px;
+        text-align:center;
+        margin-top: 100px;
+      }
+      #panel{
+        margin-top: 70px;
+      }
+      #backimg {
+        border-width:0px;
+        left:0px;
+        top:0px;
+        width:100%;
+        height:100%;
+      }
+      #panel_img {
+        border-width:0px;
+        width:456px;
+        height:431px;
+      }
+      #panel_back {
+        position: absolute;
+        z-index: 0;
+        border-width:0px;
+        width:100%;
+      }
+      #panel_content{
+        position: absolute;
+        z-index: 1;
+        border-width:0px;
+        margin-top: 70px;
+        width:100%;
+      }
+      #username {
+        border-width:0px;  
+        width:250px;
+        height:40px;
+      }
+      #username_input {
+        width:250px;
+        height:40px;
+        font-family:'Arial Normal', 'Arial';
+        font-weight:400;
+        font-style:normal;
+        font-size:13px;
+        text-decoration:none;
+        color:#000000;
+        text-align:left;
+        border: 1px solid black;
+        border-radius: 5px;
+      }
+      #password {
+        border-width:0px;
+        width:250px;
+        height:40px;
+        margin-top: 50px;
+      }
+      #password_input {
+        left:0px;
+        top:0px;
+        width:250px;
+        height:40px;
+        font-family:'Arial Normal', 'Arial';
+        font-weight:400;
+        font-style:normal;
+        font-size:13px;
+        text-decoration:none;
+        color:#000000;
+        text-align:left;
+        border: 1px solid black;
+        border-radius: 5px;
+      }
+      #confirm_password {
+        border-width:0px;
+        width:250px;
+        height:40px;
+        margin-top: 50px;
+      }
+      #confirm_password_input {
+        left:0px;
+        top:0px;
+        width:250px;
+        height:40px;
+        font-family:'Arial Normal', 'Arial';
+        font-weight:400;
+        font-style:normal;
+        font-size:13px;
+        text-decoration:none;
+        color:#000000;
+        text-align:left;
+        border: 1px solid black;
+        border-radius: 5px;
+      }
+      #register {
+        border-width:0px;
+        margin-top: 30px;
+        width:80px;
+        height:30px;
+        font-size:14px;
+      }
+      #register_button {
+        border-width:0px;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        border-width: 1px;
+        width:81px;
+        height:31px;
+      }
+      #to_login {
+        border-width:0px;
+        width:220px;
+        height:40px;
+        font-size:16px;
+      }
+    </style>
+
+     <script type="text/javascript">
+      function check_submit(){
+        var username=document.getElementById("username_input").value;
+        var password=document.getElementById("password_input").value;
+        var password2=document.getElementById("confirm_password_input").value;
+        if(username==""){
+          alert("请输入用户名");
+          return;
+        }
+        if(password==""){
+          alert("请输入密码");
+          return;
+        }
+        if(password2==""){
+          alert("请确认密码");
+          return;
+        }
+        console.log("ok");
+        var data={};
+        data["username"]=username;
+        data["password"]=password;
+        data["password2"]=password2;
+        $.ajax({
+          "url":"localhost:8080/register",
+          "type":"post",
+          "dataType":"json",
+          "data":data,
+          "success":function(result){
+            //show
+             alert("注册成功!");
+          },
+          "error":function(result){
+            //console.log("查询失败!");
+            alert("注册失败!");
+          }
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+    <div id="container">
+
+      <div id="header" class="header" align="center">         
+          <p><span>社会职位变化分析工具</span></p><p><span>后台管理系统</span></p>       
+      </div>  
+
+      <div id="panel" align="center">
+        <div id="panel_back" align="center">
+           <img id="panel_img"  src="images/panel.png"/>
+        </div>
+
+        <div id="panel_content" align="center"> 
+          <form action="/register" method="post" accept-charset="utf-8">
+  	        <div id="username">
+  	          <input id="username_input" name="username" type="text" placeholder="请输入邮箱" />
+  	        </div>
+
+  	        <div id="password">
+  	          <input id="password_input" name="password" type="password" placeholder="请输入密码" />
+  	        </div>
+
+            <div id="confirm_password">
+              <input id="confirm_password_input" name="password2" type="password" placeholder="请再次输入密码" />
+            </div>
+
+  	        <div id="register" align="center">
+              <input type="button" value="注册" onclick="check_submit()" id="register_button"/>
+  	        </div>
+
+            <div id="to_login">
+             <a href="login.html"><p><span>已有账号？去登录</span></p></a>
+            </div>
+
+          </form> 
+
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+﻿body {
+  margin:0px;
+  background-image: url('../../images/注册/back.png');
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-repeat:no-repeat ;
+  background-size:100% 100%;
+  background-attachment: fixed;"
+}
+#container {
+  height: 100%;
+  width: 100%;
+  margin-top: 0px;
+}
+#header {
+  border-width:0px;
+  width:100%;
+  height:66px;
+  font-size:28px;
+  text-align:center;
+  margin-top: 100px;
+}
+#panel{
+  margin-top: 70px;
+}
+#backimg {
+  border-width:0px;
+  left:0px;
+  top:0px;
+  width:100%;
+  height:100%;
+}
+#panel_img {
+  border-width:0px;
+  width:456px;
+  height:431px;
+}
+#panel_back {
+  position: absolute;
+  z-index: 0;
+  border-width:0px;
+  width:100%;
+}
+#panel_content{
+  position: absolute;
+  z-index: 1;
+  border-width:0px;
+  margin-top: 70px;
+  width:100%;
+}
+#username {
+  border-width:0px;  
+  width:250px;
+  height:40px;
+}
+#username_input {
+  width:250px;
+  height:40px;
+  font-family:'Arial Normal', 'Arial';
+  font-weight:400;
+  font-style:normal;
+  font-size:13px;
+  text-decoration:none;
+  color:#000000;
+  text-align:left;
+}
+#password {
+  border-width:0px;
+  width:250px;
+  height:40px;
+  margin-top: 50px;
+}
+#password_input {
+  left:0px;
+  top:0px;
+  width:250px;
+  height:40px;
+  font-family:'Arial Normal', 'Arial';
+  font-weight:400;
+  font-style:normal;
+  font-size:13px;
+  text-decoration:none;
+  color:#000000;
+  text-align:left;
+}
+#confirm_password {
+  border-width:0px;
+  width:250px;
+  height:40px;
+  margin-top: 50px;
+}
+#confirm_password_input {
+  left:0px;
+  top:0px;
+  width:250px;
+  height:40px;
+  font-family:'Arial Normal', 'Arial';
+  font-weight:400;
+  font-style:normal;
+  font-size:13px;
+  text-decoration:none;
+  color:#000000;
+  text-align:left;
+}
+#register {
+  border-width:0px;
+  margin-top: 30px;
+  width:80px;
+  height:30px;
+  font-size:14px;
+}
+#register_button {
+  border-width:0px;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  border-width: 1px;
+  width:81px;
+  height:31px;
+}
+#to_login {
+  border-width:0px;
+  width:220px;
+  height:40px;
+  font-size:16px;
+}

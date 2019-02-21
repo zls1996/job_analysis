@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>薪资水平分析</title>
+	<script src="js/echarts.min.js"></script>
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<style type="text/css" media="screen">
+	body {
+        background-image: url('./images/pie_back.jpg');
+        width: 100%;
+        height: 100%;
+        background-repeat:no-repeat ;
+        background-size:100% 100%;
+        background-attachment: fixed;
+      }
+		#container{
+			height: 90%;
+			width: 50%;
+			left: 25%;
+			right: 25%;
+			position: absolute;
+			border: 1px solid black;
+			margin-top: 2%;
+			margin-bottom: 10%;
+			background-color: #ffffff;
+			
+		}
+		#chartContainer{
+			width: 80%;
+			height: 60%;
+			margin-left: 10%;
+		}
+		#page_title{
+			margin-top: 10%;
+			margin-bottom: 5%;
+			height: 10%;
+			width: 80%;
+			margin-left: 10%
+		}
+		#page_title p{
+			font-size: 40px;
+		}
+	</style>
+	<script type="text/javascript">
+		function showChart(dataToShow){
+			var myChart = echarts.init(document.getElementById('chartContainer'));
+			var option = {
+			    title: {
+			        text: '类别'
+			    },
+			    tooltip: {
+			        trigger: 'axis'
+			    },
+			    legend: {
+			        data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+			    },
+			    grid: {
+			        left: '3%',
+			        right: '4%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        feature: {
+			            saveAsImage: {}
+			        }
+			    },
+			    xAxis: {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: ['周一','周二','周三','周四','周五','周六','周日']
+			    },
+			    yAxis: {
+			        type: 'value'
+			    },
+			    series: dataToShow
+			};
+					myChart.setOption(option);
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="page_title">
+	        <div id="page_title_text" class="text ">
+          		<p><span></span><span>薪资水平分析</span></p>
+        	</div>
+      	</div>
+      	<div id="chartContainer" >
+			<script type="text/javascript">
+				var data=[
+			        {
+			            name:'邮件营销',
+			            type:'line',
+			            stack: '总量',
+			            data:[120, 132, 101, 134, 90, 230, 210]
+			        },
+			        {
+			            name:'联盟广告',
+			            type:'line',
+			            stack: '总量',
+			            data:[220, 182, 191, 234, 290, 330, 310]
+			        },
+			        {
+			            name:'视频广告',
+			            type:'line',
+			            stack: '总量',
+			            data:[150, 232, 201, 154, 190, 330, 410]
+			        },
+			        {
+			            name:'直接访问',
+			            type:'line',
+			            stack: '总量',
+			            data:[320, 332, 301, 334, 390, 330, 320]
+			        },
+			        {
+			            name:'搜索引擎',
+			            type:'line',
+			            stack: '总量',
+			            data:[820, 932, 901, 934, 1290, 1330, 1320]
+			        }
+			    ];
+				window.onload=function(){
+					$.ajax({
+						"url":"localhost:8080/proanaly",
+				        "type":"get",
+				        "dataType":"json",
+				        "success":function(result){
+				            //show
+				            showChart(data);
+				          },
+				        "error":function(result){
+				            console.log("查询失败!");
+				            showChart(data);
+				            //alert("获取数据失败!");
+				        }
+					});
+				}
+		</script>
+	</div>
+	</div>
+</body>
+</html>
