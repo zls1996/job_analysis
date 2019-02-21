@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jobanalysis.job_analysis.dao.UserDao" >
+    <sql id="BASE_TABLE">
+        t_user
+    </sql>
+
+    <sql id="BASE_COLUMN">
+        user_name,password
+    </sql>
+
+    <insert id="save" parameterType="com.jobanalysis.job_analysis.entity.User">
+        INSERT INTO
+        <include refid="BASE_TABLE"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            user_name,password,
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{userName, jdbcType=VARCHAR},#{password, jdbcType=VARCHAR},
+        </trim>
+    </insert>
+
+    <select id="findByNameAndPassword" resultType="com.jobanalysis.job_analysis.entity.User">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        WHERE
+        user_name = #{arg0} AND password = #{arg1}
+    </select>
+
+    <select id="findByName" resultType="com.jobanalysis.job_analysis.entity.User">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        WHERE
+        user_name = #{userName}
+    </select>
+</mapper>

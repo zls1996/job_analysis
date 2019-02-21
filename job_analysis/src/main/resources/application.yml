@@ -1,0 +1,93 @@
+spring:
+  #profiles: dev
+  #数据库部分
+  datasource:
+    url: jdbc:mysql://localhost:3306/job_analysis?serverTimezone=UTC
+    username: root
+    password: root
+    #mysql8.0以前用com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    max-idle: 10
+    max-wait: 10000
+
+  #http请求设置
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+  #缓存生存时间
+  cache:
+    redis:
+      time-to-live: 60s
+
+
+
+  #Redis部分
+
+#  redis:
+#    database: 0
+#    host: 127.0.0.1
+#    port: 6379
+#    #连接超时时间
+#    timeout: 5000
+
+  thymeleaf:
+    #关闭缓存
+    cache: false
+    #检查模板路径是否存在
+    check-template: true
+    encoding: UTF-8
+  #    prefix: classpath:templates
+  #    suffix: .html
+
+  #springmvc视图解析器
+  mvc:
+    view:
+      prefix: classpath:templates/
+      suffix: .html
+    static-path-pattern: /static/**
+
+  #热部署
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+
+
+  jackson:
+    default-property-inclusion: non_null
+
+
+
+
+
+
+#Tomcat配置
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+
+
+
+#Mybatis
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  config-location: classpath:mybatis-cfg.xml
+
+#大数据组件
+hadoop:
+  hdfs:
+
+
+  hbase:
+    master-ip: 127.0.0.1
+    hbase-table-namespace: hbase_tb
+    default-encoding: UTF-8
+
+  zookeeper:
+    ip: 127.0.0.1
+    port: 2181
