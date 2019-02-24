@@ -41,44 +41,44 @@ import org.springframework.stereotype.Component;
 @Component
 public class DBHelperHBase {
 	private static Logger log = Logger.getLogger(DBHelperHBase.class);
-	
+
 	//HBase主节点
 	//@Value("${hadoop.hbase.master-ip}")
 	private final static String MASTER_IP = "127.0.0.1";
-	
+
 	//HBase表的命名空间
 	private final static String HBASE_TABLE_NAMESPACE = "hbase_tb";
-	
+
 	//conf
 
 	public static Configuration conf = null;
-	
+
 	//HBAseAdmin
 	private HBaseAdmin hbaseAdmin = null;
-	
+
 	//HTable管理对象
 	private HTable _hTableAdmin = null;
-	
+
 	private ResultScanner resultScanner = null;
-	
+
 	//删锁表
 	private Boolean lockDelTable = true;
-	
+
 	//删行锁
 	private Boolean lockDelRow = true;
-	
+
 	private static final String DEFAULT_ENDODING = "UTF-8";
-	
-	
-	
+
+
+
 	static {
 		conf = HBaseConfiguration.create();
 		//设置hbase的zookeeper
 		conf.set("hbase.zookeeper.quorum", MASTER_IP);
 		conf.set("hbase.zookeeper.property.clientPort", "2181");
-		
+
 	}
-	
+
 	/**
 	 * 获得连接
 	 * @return
@@ -97,12 +97,12 @@ public class DBHelperHBase {
 	public DBHelperHBase() {
 		this.createHBaseNameSpace();
 	}
-	
+
 	/**
 	 * 创建HBase命名空间
 	 */
 	private void createHBaseNameSpace() {
-		
+
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
 			if(! this.existsHBaseNameSpace()) {
@@ -122,10 +122,10 @@ public class DBHelperHBase {
 		}finally {
 			this.closeHBaseAdmin("CreateHBaseNameSpace");
 		}
-		
-		
+
+
 	}
-	
+
 	/**
 	 * 判断是否存在HBase命名空间
 	 * @return
@@ -134,7 +134,7 @@ public class DBHelperHBase {
 		Boolean result = false;
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
-			
+
 			//取得现有命名空间列表
 			NamespaceDescriptor[] nds = this.hbaseAdmin.listNamespaceDescriptors();
 			for(NamespaceDescriptor space: nds) {
@@ -144,7 +144,7 @@ public class DBHelperHBase {
 					break;
 				}
 			}
-			
+
 			log.info(String.format("HBase NameSpace Exists[%s]!", result));
 		} catch (MasterNotRunningException e) {
 			// TODO Auto-generated catch block
@@ -156,10 +156,10 @@ public class DBHelperHBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * 删除HBase命名空间
 	 */
@@ -182,9 +182,9 @@ public class DBHelperHBase {
 		}finally {
 			this.closeHBaseAdmin("deleteHBaseNamespace");
 		}
-		
+
 	}
-	
+
 	/**
 	 * 关闭HBase连接
 	 * @param string
@@ -197,9 +197,9 @@ public class DBHelperHBase {
 			log.error(e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * 表是否存在判断
 	 * @param tableName
@@ -224,12 +224,12 @@ public class DBHelperHBase {
 		}
 		return result;
 	}
-	
-	
+
+
 	public void createTable(String tableName , String ... cFamilyName) {
 		this.createTable(tableName, false, cFamilyName);
 	}
-	
+
 	/**
 	 * 创建表
 	 * @param tableName
@@ -238,11 +238,11 @@ public class DBHelperHBase {
 	 */
 	public void createTable(String tableName, boolean isCoverable, String ... cFamilyName) {
 		log.info("start create table ...");
-		
+
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
 			tableName = HBASE_TABLE_NAMESPACE + ":" + tableName;
-			
+
 			/**
 			 * 表是否存在判断
 			 */
@@ -252,22 +252,22 @@ public class DBHelperHBase {
 					this.hbaseAdmin.disableTable(tableName);//禁用表
 					this.hbaseAdmin.deleteTable(tableName);//删除表
 					log.info(tableName + "is exits, delete ... ");
-					
+
 					//开始建表
 					TableName tname = TableName.valueOf(tableName);
 					HTableDescriptor htd = new HTableDescriptor(tname);
-					
+
 					//加列族
 					for(int i = 0 ; i < cFamilyName.length ; i++) {
 						//列族
 						HColumnDescriptor hcd = new HColumnDescriptor(cFamilyName[i]);
 						htd.addFamily(hcd);
-						
+
 					}
-					
+
 					//建表
 					this.hbaseAdmin.createTable(htd);
-					
+
 					log.info("Cover HBase Table [ " + tableName + " ] success !");
 				}else {
 					log.info(tableName + " is exit ....... no create table !");
@@ -277,19 +277,19 @@ public class DBHelperHBase {
 				//开始建表
 				TableName tname = TableName.valueOf(tableName);
 				HTableDescriptor htd = new HTableDescriptor(tname);
-				
+
 				//加列族
 				for(int i = 0 ; i <cFamilyName.length ; i++) {
 					///列族
 					HColumnDescriptor hcd = new HColumnDescriptor(cFamilyName[i]);
 					htd.addFamily(hcd);
 				}
-				
+
 				//建表
 				this.hbaseAdmin.createTable(htd);
-				
+
 				log.info("Create new HBase Table [ " + tableName + " ] success !");
-				
+
 			}
 		} catch (MasterNotRunningException e) {
 			// TODO Auto-generated catch block
@@ -303,7 +303,7 @@ public class DBHelperHBase {
 		}
 		log.info("end create table ...");
 	}
-	
+
 	/**
 	 * 添加一行多限定符的数据
 	 * @param tableName
@@ -321,14 +321,14 @@ public class DBHelperHBase {
 		try {
 			List<Put> puts = new ArrayList<Put>();
 			for(String cq :cqAndValue.keySet()) {
-				
-					this._hTableAdmin = new HTable(conf, tableName);
-	
-					Put put = new Put(Bytes.toBytes(rowKey));
-					//写入行中的列块
-					put.add(columnFamily.getBytes(DEFAULT_ENDODING), cq.getBytes(DEFAULT_ENDODING), 
-							cqAndValue.get(cq).toString().getBytes(DEFAULT_ENDODING));
-					puts.add(put);
+
+				this._hTableAdmin = new HTable(conf, tableName);
+
+				Put put = new Put(Bytes.toBytes(rowKey));
+				//写入行中的列块
+				put.add(columnFamily.getBytes(DEFAULT_ENDODING), cq.getBytes(DEFAULT_ENDODING),
+						cqAndValue.get(cq).toString().getBytes(DEFAULT_ENDODING));
+				puts.add(put);
 			}
 			_hTableAdmin.put(puts);
 		} catch (IOException e) {
@@ -338,7 +338,7 @@ public class DBHelperHBase {
 			this.closeHBaseAdmin("addRowData");
 		}
 	}
-	
+
 	/**
 	 * 根据表名、列族、map来插入数据
 	 * @param tableName
@@ -355,10 +355,10 @@ public class DBHelperHBase {
 			for(Entry<String , List<Map<String , String>>> entry : dataMap.entrySet()) {
 				//获得RowKey
 				String rowKey = new String(entry.getKey());
-				
+
 				Put put = new Put(rowKey.getBytes(DEFAULT_ENDODING));
 				List<Map<String , String>> rowList = (List<Map<String, String>>) entry.getValue();
-				
+
 				//System.out.printf("插入第[%s]行" , (rowIndex++));
 				//System.out.print("\t");
 				/**
@@ -383,9 +383,9 @@ public class DBHelperHBase {
 			log.error(e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * 导出hbase数据
 	 * @param tableName
@@ -395,14 +395,14 @@ public class DBHelperHBase {
 		Map<String , List<Map<String , String>>> resultMap = new HashMap<String, List<Map<String,String>>>();
 		tableName = HBASE_TABLE_NAMESPACE + ":" + tableName;
 		TableName tablename = TableName.valueOf(tableName);
-		
+
 		try {
 			this._hTableAdmin = new HTable(conf, tableName);
 			Table table = getConnection().getTable(tablename);
 			Scan scan = new Scan();
 			ResultScanner resultScanner = table.getScanner(scan);
-			
-			
+
+
 			//遍历ResultScanner
 			for(Result result : resultScanner) {
 				List<Map <String , String>> cellList = new ArrayList<Map<String,String>>();
@@ -413,9 +413,9 @@ public class DBHelperHBase {
 					//获得列名
 					String colName = Bytes.toString(cell.getQualifierArray(),
 							cell.getQualifierOffset(),cell.getQualifierLength());
-					
+
 					String columnValue = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-					
+
 					Map<String , String> columnMap = new HashMap<String, String>();
 					columnMap.put(colName, columnValue);
 					cellList.add(columnMap);
@@ -428,7 +428,7 @@ public class DBHelperHBase {
 //					String columnName = new String(kv.getKey(), DEFAULT_ENDODING);
 //					String columnValue = new String(kv.getValue(), DEFAULT_ENDODING);
 //					Map<String ,String > columnMap = new HashMap<String, String>();
-//					
+//
 //					columnMap.put(columnName, columnValue);
 //					list.add(columnMap);
 //				}
@@ -439,66 +439,66 @@ public class DBHelperHBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
- 		return resultMap;
+		return resultMap;
 	}
-	
-	
+
+
 	public void closeResultScanner(String methodName) {
 		this.resultScanner.close();
 		log.info(methodName  + "(...) :关闭与ResultScanner的连接！");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

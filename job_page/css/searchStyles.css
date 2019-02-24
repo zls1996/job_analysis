@@ -31,7 +31,7 @@
 #page_title {
   border-width:0px;
   width:165px;
-  height:60px;
+  height:40px;
   font-size:28px;
   color:rgba(0, 102, 255, 0.858823529411765);
 }
@@ -40,13 +40,13 @@
   position:absolute;
   z-index: 1;
   left:0px;
-  top:14px;
+  top:30px;
   width:165px;
   word-wrap:break-word;
   text-align: left;
 }
 #search_panel{
-  border-radius: 1px;
+  border-radius: 5px;
   border-width: 1px;
   border: 1px solid black;
   height: 100px;
@@ -54,7 +54,7 @@
 }
 #panel_form{
   width: 100%;
-  height: 40px;
+  height: 50px;
   float: left;
   margin-top: 30px;
   margin-left: 4%;
@@ -62,21 +62,37 @@
 #search_text{
   float: left;
   width: 20%;
-  height: 100%;
+  height: 90%;
 }
 #search_input{
   width: 100%;
   height: 100%;
+  border-radius: 5px;
+  border-width: 1px;
+  border: 1px solid black;
+}
+#search_input:focus{
+  background-color: #ffffff;
+   border-color: #ffffff;
+   border-width: 1px;
 }
 #select_pos{
   margin-left: 4%;
   float: left;
   width: 20%;
-  height: 100%;
+  height: 90%;
 }
 #pos_input{
   width:100%;
   height: 100%;
+  border-radius: 5px;
+  border-width: 1px;
+  border: 1px solid black;
+}
+#pos_input:focus{
+  background-color: #ffffff;
+   border-color: #ffffff;
+   border-width: 1px;
 }
 #select_edu{
   margin-left: 4%;
@@ -86,43 +102,62 @@
 }
 #education{
   width: 100%;
-  height: 100%;
+  height: 90%;
+}
+#education:hover {
+  color: #444;
+  background: #eee;
+  border-color: #ccc;
+  text-decoration: none
 }
 #search{
   margin-left: 4%;
   float: left;
   width: 8%;
-  height: 100%;
+  height: 90%;
 }
 #search_button{
   width: 100%;
   height: 100%;
   text-align: center;
 }
+#search_button:hover {
+  color: #444;
+  background: #eee;
+  border-color: #ccc;
+  text-decoration: none
+}
 #clear{
   margin-left: 5%;
   float: left;
   width: 8%;
-  height: 100%;
+  height: 90%;
 }
 #clear_button{
   width: 100%;
   height: 100%;
 }
+#clear_button:hover {
+  color: #444;
+  background: #eee;
+  border-color: #ccc;
+  text-decoration: none
+}
 #showResult{
-  margin-top: 50px;
+  margin-top: 10px;
 }
 #resultTable{
   border-collapse:collapse;
   width:100%;
-  margin-top: 90px;
+  margin-top: 5px;
   margin-right:auto;
   margin-left: auto;
+  margin-bottom: 300px;
   text-align: center;
 }
 #resultTable th {
   padding:5px 15px 5px 6px;
-  background-color:#cccccc;
+  background-color:#ffffff;
   border:1px solid #3F3F3F;
   text-align:center;
 }

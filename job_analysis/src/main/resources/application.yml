@@ -17,22 +17,16 @@ spring:
       charset: UTF-8
       enabled: true
 
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
   #缓存生存时间
   cache:
     redis:
       time-to-live: 60s
-
-
-
-  #Redis部分
-
-#  redis:
-#    database: 0
-#    host: 127.0.0.1
-#    port: 6379
-#    #连接超时时间
-#    timeout: 5000
-
   thymeleaf:
     #关闭缓存
     cache: false
@@ -59,11 +53,6 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
-
-
-
-
-
 #Tomcat配置
 server:
   port: 8080
@@ -81,13 +70,13 @@ mybatis:
 #大数据组件
 hadoop:
   hdfs:
-
-
+    path: hdfs://127.0.0.1:19000
   hbase:
     master-ip: 127.0.0.1
-    hbase-table-namespace: hbase_tb
+    table-namespace: hbase_tb
     default-encoding: UTF-8
+    column-family: job_info
+    sheet-name: Sheet1
+    zookeeper:
+        quorum: 127.0.0.1:2181
 
-  zookeeper:
-    ip: 127.0.0.1
-    port: 2181

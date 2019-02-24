@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>职位发布区域分析</title>
+	<script type="text/javascript" src="js/login.js"></script> 
 	<script src="js/echarts.min.js"></script>
 	<script src="js/jquery-2.2.3.min.js"></script>
 	<script src="js/ip.js"></script>
@@ -41,8 +42,8 @@
 			font-size: 40px;
 		}
 		.myChart{
-			width: 600px;
-			height: 300px;
+			width: 90%;
+			height: 400px;
 			margin-bottom: 100px;
 		}
 	</style>
@@ -86,7 +87,7 @@
 			    ],
 			    series : [
 			        {
-			            name:'直接访问',
+			            name:'职位数量',
 			            type:'bar',
 			            barWidth: '60%',
 			            data:yData
@@ -116,7 +117,7 @@
 				var xData=[];
 				var yData=[];
 				for(var cityIndex in cities){
-					if(cityIndex>5)break;
+					if(cityIndex>=10)break;
 					xData.push(cities[cityIndex]['city']);
 					yData.push(cities[cityIndex]['count']);					
 				}

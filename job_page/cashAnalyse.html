@@ -2,8 +2,13 @@
 <html>
 <head>
 	<title>薪资水平分析</title>
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	
+	<script type="text/javascript" src="js/login.js"></script> 
+	
 	<script src="js/echarts.min.js"></script>
 	<script src="js/jquery-2.2.3.min.js"></script>
+	<script src="js/ip.js"></script>
 	<style type="text/css" media="screen">
 	body {
         background-image: url('./images/pie_back.jpg');
@@ -14,7 +19,7 @@
         background-attachment: fixed;
       }
 		#container{
-			height: 90%;
+			height:auto;
 			width: 50%;
 			left: 25%;
 			right: 25%;
@@ -27,12 +32,13 @@
 		}
 		#chartContainer{
 			width: 80%;
-			height: 60%;
+			height: 800px;
 			margin-left: 10%;
+			margin-bottom: 5%;
 		}
 		#page_title{
 			margin-top: 10%;
-			margin-bottom: 5%;
+			margin-bottom: 1%;
 			height: 10%;
 			width: 80%;
 			margin-left: 10%
@@ -40,24 +46,44 @@
 		#page_title p{
 			font-size: 40px;
 		}
+		#addCity{
+			height: 40px;
+			margin-bottom: 30px;
+		}
+		#addCityInput{
+			height: 100%;
+			border: 1px solid black;
+			border-radius: 3px;
+		}
+		#addCityButton{
+			margin-right: 13%;
+			margin-left: 1%;
+		}
+		#addCityButton:hover {
+		  color: #444;
+		  background: #eee;
+		  border-color: #ccc;
+		  text-decoration: none
+		}
 	</style>
 	<script type="text/javascript">
-		function showChart(dataToShow){
+		function showChart(dataToShow,fieldList,cityList){
 			var myChart = echarts.init(document.getElementById('chartContainer'));
 			var option = {
 			    title: {
-			        text: '类别'
+			        text: '行业类别\n\n'
 			    },
 			    tooltip: {
 			        trigger: 'axis'
 			    },
 			    legend: {
-			        data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+			        data:fieldList
 			    },
 			    grid: {
 			        left: '3%',
 			        right: '4%',
 			        bottom: '3%',
+			        top:'20%',
 			        containLabel: true
 			    },
 			    toolbox: {
@@ -68,14 +94,91 @@
 			    xAxis: {
 			        type: 'category',
 			        boundaryGap: false,
-			        data: ['周一','周二','周三','周四','周五','周六','周日']
+			        data: cityList
 			    },
 			    yAxis: {
-			        type: 'value'
+			        type: 'value',
+			        scale:true,
+			        name:"薪资(k/月)",
+			        interval:0.5,			      
+			        max:26
+			       
 			    },
 			    series: dataToShow
 			};
-					myChart.setOption(option);
+			myChart.setOption(option);
+		}
+		var cityList=new Array("北京","上海","深圳","广州","武汉");
+		var fieldList=["互联网","房地产","金融","市场"];		
+		function getData(cityList){			
+			var cities=cityList;
+			$.ajax({
+				"url":defaultIp+"/salaryanalysis",
+				"type":"post",
+				"traditional":true,
+				//"dataType":"json",
+				"contentType":"application/json",
+				"data":JSON.stringify(cities),
+				"success":function(result){
+				    //show
+				    var res=parseResult(result);
+				    showChart(res,fieldList,cityList);
+				    },
+				"error":function(result){
+				    console.log("查询失败!");
+				    //showChart(data,fieldList,cityList);
+				    alert("获取数据失败!");
+				    }
+				});
+		}
+		function parseResult(result){
+		console.log(result);			
+			var res=[];
+			fieldList=[];
+			//
+			fieldList.push('');	
+			fieldList.push('');	
+			fieldList.push('');			
+			for(var fieldIndex in result){
+				var jobClass=result[fieldIndex]["jobClass"];
+				fieldList.push(jobClass);
+				var salaryList=result[fieldIndex]["jobSalaryList"];
+				var tempObj={};
+				for(var cityIndex in cityList){
+					tempObj[cityList[cityIndex]]="";
+				}
+				for(var listIndex in salaryList){
+					var city=salaryList[listIndex];
+					tempObj[city["city"]]=city["avgSalary"];
+				}				
+				var tempArr=[];
+				for(var key in tempObj){
+					tempArr.push(tempObj[key]);
+				}
+				var item={};
+				item["name"]=jobClass;
+				item["type"]="line";				
+				item["data"]=tempArr;
+				res.push(item);
+			}
+
+			return res;
+		}
+		function addCity(){
+			var city=document.getElementById("addCityInput").value;
+			console.log(city);
+			document.getElementById("addCityInput").value="";
+			if(cityList.indexOf(city)!=-1){
+				alert("城市已经存在!");
+				return;
+			}
+			cityList.push(city);
+			getData(cityList);
+			console.log(cityList);
+		}
+
+		window.onload=function(){
+			getData(cityList);
 		}
 	</script>
 </head>
@@ -86,57 +189,11 @@
           		<p><span></span><span>薪资水平分析</span></p>
         	</div>
       	</div>
+      	<div id="addCity" align="right">
+      		<input type="text" id="addCityInput"/>
+      		<button type="button" onclick="addCity()" id="addCityButton" class="btn btn-default">添加城市</button>
+      	</div>
       	<div id="chartContainer" >
-			<script type="text/javascript">
-				var data=[
-			        {
-			            name:'邮件营销',
-			            type:'line',
-			            stack: '总量',
-			            data:[120, 132, 101, 134, 90, 230, 210]
-			        },
-			        {
-			            name:'联盟广告',
-			            type:'line',
-			            stack: '总量',
-			            data:[220, 182, 191, 234, 290, 330, 310]
-			        },
-			        {
-			            name:'视频广告',
-			            type:'line',
-			            stack: '总量',
-			            data:[150, 232, 201, 154, 190, 330, 410]
-			        },
-			        {
-			            name:'直接访问',
-			            type:'line',
-			            stack: '总量',
-			            data:[320, 332, 301, 334, 390, 330, 320]
-			        },
-			        {
-			            name:'搜索引擎',
-			            type:'line',
-			            stack: '总量',
-			            data:[820, 932, 901, 934, 1290, 1330, 1320]
-			        }
-			    ];
-				window.onload=function(){
-					$.ajax({
-						"url":"localhost:8080/proanaly",
-				        "type":"get",
-				        "dataType":"json",
-				        "success":function(result){
-				            //show
-				            showChart(data);
-				          },
-				        "error":function(result){
-				            console.log("查询失败!");
-				            showChart(data);
-				            //alert("获取数据失败!");
-				        }
-					});
-				}
-		</script>
 	</div>
 	</div>
 </body>

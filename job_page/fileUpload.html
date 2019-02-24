@@ -2,55 +2,49 @@
 <html>
 <head>
 	<title>文件上传</title>
+	<script type="text/javascript" src="js/login.js"></script>
 	<script src="js/ip.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/defaultContainer.css">
+	<link rel="stylesheet" href="css/bootstrap.css">
 	<script src="js/jquery-2.2.3.min.js"></script>
 	<script type="text/javascript">
 		function uploadFile(){
-			var file=document.getElementById("fileSelected").files[0];
+			var files=document.getElementById("fileSelected").files;
 			var path=document.getElementById("fileSelected").value;
 			//var fileName=document.getElementById("fileName").value;
 			var filePath=document.getElementById("filePath").value;
 			var fileId=document.getElementById("id").value;
-			console.log(file);
+			document.getElementById("showInfo").hidden=false;
+			console.log(files);
 			console.log(path);
 			console.log(filePath);
 			console.log(fileId);
 			//console.log(fileName);
-			var name=file.name;		
-			var formData=new FormData();
-			//formData.append("fileName",fileName);
-			formData.append("file",file);
-			formData.append("path",filePath);
-			formData.append("id",fileId);
-			
-			$.ajax({
-				"url":defaultIp+"/file/upload",
-				"type":"post",
-				"data":formData,
-				"dataType":"text",
-				"contentType":false,
-				"processData":false,
-				"success":function(result){
-					/**
-					if(result.status=="true"){
-						alert("上传成功");
-					}else if(result.status=="error"){
-						alert("上传失败");
+			for(var i=0;i<files.length;++i)
+			{
+				var formData=new FormData();
+				//formData.append("fileName",fileName);
+				formData.append("file",files[i]);
+				formData.append("path",filePath);
+				formData.append("id",fileId);
+				
+				$.ajax({
+					"url":defaultIp+"/file/upload",
+					"type":"post",
+					"data":formData,
+					"dataType":"text",
+					"contentType":false,
+					"processData":false,
+					"success":function(result){
+						console.log(result);
+						document.getElementById("showInfo").append(result+"\n");
+						//alert(result);
+					},
+					"error":function(result){
+						console.log(result);
 					}
-					*/
-					alert(result);
-				},
-				"error":function(result){
-					alert("上传失败");
-				},
-				"xhr":function(){
-					var xhr=$.ajaxSettings.xhr();
-					if(onprogress&&xhr.upload){
-						xhr.upload.addEventListener("progress" , onprogress, false);
-　　　　　　　　			return xhr;
-					}
-				}
-			});
+				});
+			}
 			
 			
 		}
@@ -61,28 +55,117 @@
             $("#progressBar").value=percent;                     
 		}
 	</script>
+	<style type="text/css" media="screen">
+		#form_panel{
+			display:inline-block;
+			width: 50%;
+			height: 100%;
+			margin-top: 20px;
+		}
+		.fileinput-button {
+            position: absolute;
+            display: inline-block;
+        }
+
+        .fileinput-button input{
+            position: absolute;
+        }
+        #page_title{
+			margin-top: 10%;
+			margin-bottom: 1%;
+			height: 10%;
+			width: 80%;
+			margin-left: 25%
+		}
+		#page_title p{
+			font-size: 40px;
+		}
+		#content{
+			width: 100%;
+		}
+		#upload:hover {
+		    color: #444;
+		    background: #eee;
+		    border-color: #ccc;
+		    text-decoration: none
+		}
+		.a-upload {
+		    padding: 4px 12px;
+		    height: 45px;
+		    line-height: 35px;
+		    position: relative;
+		    cursor: pointer;
+		    color: black;
+		    background: #ddd;
+		    border: 1px solid #ddd;
+		    border-radius: 5px;
+		    overflow: hidden;
+		    display: inline-block;
+		    *display: inline;
+		    *zoom: 1;
+		    text-align: center;
+		}
+
+		.a-upload  input {
+		    position: absolute;
+		    font-size: 40px;
+		    right: 0;
+		    top: 0;
+		    opacity: 0;
+		    filter: alpha(opacity=0);
+		    cursor: pointer;
+		    text-align:center;
+		}
+
+		.a-upload:hover {
+		    color: #444;
+		    background: #eee;
+		    border-color: #ccc;
+		    text-decoration: none
+		}
+	</style>
 </head>
 <body>
-<form action="" method="post" enctype="multipart/form-data">
-    <input type="file" id="fileSelected" name="file" />
-    <br>
-	<!--
-    <br>
-    <input type="text" id="fileName" name="fileName" placeholder="请输入文件名" />
-    <br>
-	-->
-    <br>
-    <input type="text" id="filePath" name="path" placeholder="请输入路径" />
-    <br>
-	
-    <br>
-    <input type="text" id="id" name="id" placeholder="请输入id"></input>
-    <br>
-    <br>
-    <input type="button" id="upload" onclick="uploadFile()" value="上传文件" />
-    <br>
-    <br>
-    <progress value="0" max="100" id="progressBar"></progress>
-    </form>
+<div id="container" align="left">
+	<div id="page_title">
+	    <div id="page_title_text" class="text ">
+          	<p><span></span><span>数据文件上传</span></p>
+       	</div>
+     </div>
+     <div id="content" align="center">
+		<div id="form_panel" align="left">
+			<form action="" method="post" enctype="multipart/form-data">
+				<!--
+			    <input type="file" class="btn btn-default" multiple="multiple" id="fileSelected" name="file" />
+			   	-->
+			   	<a href="javascript:;" class="a-upload">
+    				<input type="file" name="" id="">选择文件
+				</a>  
+			    <br>
+				<!--
+			    <br>
+			    <input type="text" id="fileName" name="fileName" placeholder="请输入文件名" />
+			    <br>
+				-->
+			    <br>
+			    <input type="text" class="form-control" id="filePath" name="path" placeholder="请输入路径" />
+			    <br>
+				
+			    <br>
+			    <input type="text" class="form-control" id="id" name="id" placeholder="请输入id"></input>
+			    <br>
+			    <br>
+			    <input type="button" class="btn btn-default" id="upload" onclick="uploadFile()" value="上传文件" />
+			    <br>
+			    <br>
+			    <!--
+			    <progress value="0" max="100" id="progressBar"></progress>
+			-->
+				<textarea name="showInfo" id="showInfo" hidden="true" style="width: 400px;height: 400px;">f				
+				</textarea>
+			</form>
+		</div>
+	</div>
+</div>
 </body>
 </html>

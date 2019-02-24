@@ -4,14 +4,16 @@
     <title>职位搜索</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <link href="css/searchStyles.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/login.js"></script> 
     <script src="css/bootstrap.min.js"></script>
     <script src="js/jquery-2.2.3.min.js"></script>
     <script src="js/ip.js"></script>
     <!--
     for bootstrap table
     -->
-    <link rel="stylesheet" href="css/bootstrap4.css" />
-    <link rel="stylesheet" href="css/bootstrap-table.css" />  
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-table.css" /> 
+    <script src="js/popper.min.js"></script>  
     <script src="js/bootstrap.js"></script> 
     <script src="js/bootstrap-table.js"></script>
     <script type="text/javascript" src="js/bootstrap-table-zh-CN.js"></script>
@@ -50,22 +52,23 @@
         for(var id in dataList){          
           var name=dataList[id]['jobName'];
           var area=dataList[id]['location'];
-          var edu=dataList[id]['education'];  
-          dataToShow[id]={"name":name,"area":area,"education":edu};
+          var edu=dataList[id]['education'];
+          var salary=dataList[id]['salary'];  
+          var company=dataList[id]['company'];
+          dataToShow[id]={"name":name,"area":area,"education":edu,"salary":salary,"company":company};
         }
         
         $(function () {
           $('#resultTable').bootstrapTable({
             method: 'get',
             cache: false,
-            height: 600,
             striped: true,
             pagination: true,
-            pageSize: 6,
+            pageSize: 5,
             pageNumber:1,
-            pageList: [6, 12, 24, 30],
+            pageList: [5, 10, 15, 20],
+            smartDisplay:false,
             sidePagination:'client',
-            search: true,
             showColumns: false,
             showRefresh : false, // 是否显示刷新按钮
             showExport: false,
@@ -74,9 +77,11 @@
             columns: 
             [
               {field:"checked",checkbox:true},
-              {field:"name",title:"职位名称",align:"center",valign:"middle",sortable:"true"},
-              {field:"area",title:"区域",align:"center",valign:"middle",sortable:"true"},
-              {field:"education",title:"学历",align:"center",valign:"middle",sortable:"true"},
+              {field:"name",title:"职位名称",align:"center",valign:"middle",sortable:"false"},
+              {field:"area",title:"区域",align:"center",valign:"middle",sortable:"false"},
+              {field:"education",title:"学历",align:"center",valign:"middle",sortable:"false"},
+              {field:"salary",title:"薪资",align:"center",valign:"middle",sortable:"false"},
+              {field:"company",title:"公司",align:"center",valign:"middle",sortable:"false"}
             ],
             data:dataToShow,
           });                   
@@ -130,7 +135,7 @@
       </script>
       <div id="page_title">
         <img id="page_title_img" class="img " src="images/search.png"/>
-        <div id="page_title_text" class="text ">
+        <div id="page_title_text" class=" ">
           <p><span></span><span>职位搜索</span></p>
         </div>
       </div>
@@ -144,7 +149,7 @@
               <input id="pos_input" value="武汉" name="pos" type="text" placeholder="请输入地区">
             </div>
             <div id="select_edu">
-              <select id="education" name="education">
+              <select id="education" class="btn btn-default" name="education">
                 <option value="请选择学历">请选择学历</option>
                 <option value="大专">大专</option>
                 <option value="本科" selected="true">本科</option>
@@ -153,11 +158,11 @@
               </select>
             </div>
             <div id="search">
-              <input type="button" class="" id="search_button" onclick="search()" value="查询"/>
+              <input type="button" class="btn btn-default" id="search_button" onclick="search()" value="查询"/>
             </div>
 
             <div id="clear">
-              <button type="button" id="clear_button" onclick="clearAllInput()">重置</button>
+              <button type="button" class="btn btn-default" id="clear_button" onclick="clearAllInput()">重置</button>
             </div>
           </div>
         </div> 

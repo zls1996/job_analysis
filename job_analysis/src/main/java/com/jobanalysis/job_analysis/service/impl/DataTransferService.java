@@ -92,7 +92,7 @@ public class DataTransferService implements IDataTransferService {
             //同时将生成的JobHDFs信息传入到mysql
             jobDao.insert(jobHdfs);
 
-            return "Excel文件上传成功，数据已经存储到HDFS";
+            return "文件："+originalFilename + "上传成功！！！";
 
         } catch (IOException e) {
             e.printStackTrace();

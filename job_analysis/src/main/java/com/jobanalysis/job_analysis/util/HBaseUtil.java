@@ -31,17 +31,17 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 /**
- * 
+ *
  * @author 朱立松
  *
  */
 @Component
 public class HBaseUtil {
-private static Logger log = Logger.getLogger(DBHelperHBase.class);
-	
+	private static Logger log = Logger.getLogger(DBHelperHBase.class);
+
 	//HBase主节点
 	private final static String MASTER_IP = "127.0.0.1";
-	
+
 	//HBase表的命名空间
 	private final static String HBASE_TABLE_NAMESPACE = "hbase_tb";
 
@@ -53,36 +53,36 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 
 	//conf
 	public static Configuration conf = null;
-	
+
 	//HBAseAdmin
 	private HBaseAdmin hbaseAdmin = null;
-	
+
 	//HTable管理对象
 	private HTable _hTableAdmin = null;
-	
+
 	private ResultScanner resultScanner = null;
-	
+
 	//删锁表
 	@SuppressWarnings("unused")
 	private Boolean lockDelTable = true;
-	
+
 	//删行锁
 	@SuppressWarnings("unused")
 	private Boolean lockDelRow = true;
-	
+
 	private static final String DEFAULT_ENDODING = "UTF-8";
-	
-	
-	
+
+
+
 	static {
 		conf = HBaseConfiguration.create();
 		//设置hbase的zookeeper
 		conf.set("hbase.zookeeper.quorum", "127.0.0.1:2181");
 		//conf.set("hbase.master", "192.168.220.132:60000");
 		//conf.set("hbase.zookeeper.property.clientPort", "2181");
-		
+
 	}
-	
+
 	/**
 	 * 获得连接
 	 * @return
@@ -101,13 +101,13 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 	public HBaseUtil() {
 		this.createHBaseNameSpace();
 	}
-	
+
 	/**
 	 * 创建HBase命名空间
 	 */
 	@SuppressWarnings("deprecation")
 	private void createHBaseNameSpace() {
-		
+
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
 			if(! this.existsHBaseNameSpace()) {
@@ -127,10 +127,10 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		}finally {
 			this.closeHBaseAdmin("CreateHBaseNameSpace");
 		}
-		
-		
+
+
 	}
-	
+
 	/**
 	 * 判断是否存在HBase命名空间
 	 * @return
@@ -140,7 +140,7 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		Boolean result = false;
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
-			
+
 			//取得现有命名空间列表
 			NamespaceDescriptor[] nds = this.hbaseAdmin.listNamespaceDescriptors();
 			for(NamespaceDescriptor space: nds) {
@@ -150,7 +150,7 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 					break;
 				}
 			}
-			
+
 			log.info(String.format("HBase NameSpace Exists[%s]!", result));
 		} catch (MasterNotRunningException e) {
 			e.printStackTrace();
@@ -159,10 +159,10 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * 删除HBase命名空间
 	 */
@@ -183,9 +183,9 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		}finally {
 			this.closeHBaseAdmin("deleteHBaseNamespace");
 		}
-		
+
 	}
-	
+
 	/**
 	 * 关闭HBase连接
 	 * @param string
@@ -200,9 +200,9 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 			log.error(e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * 表是否存在判断
 	 * @param tableName
@@ -225,12 +225,12 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		}
 		return result;
 	}
-	
-	
+
+
 	public void createTable(String tableName , String ... cFamilyName) {
 		this.createTable(tableName, false, cFamilyName);
 	}
-	
+
 	/**
 	 * 创建表
 	 * @param tableName
@@ -240,11 +240,11 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 	@SuppressWarnings("deprecation")
 	public void createTable(String tableName, boolean isCoverable, String ... cFamilyName) {
 		log.info("start create table ...");
-		
+
 		try {
 			this.hbaseAdmin = new HBaseAdmin(conf);
 			tableName = HBASE_TABLE_NAMESPACE + ":" + tableName;
-			
+
 			/**
 			 * 表是否存在判断
 			 */
@@ -254,22 +254,22 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 					this.hbaseAdmin.disableTable(tableName);//禁用表
 					this.hbaseAdmin.deleteTable(tableName);//删除表
 					log.info(tableName + "is exits, delete ... ");
-					
+
 					//开始建表
 					TableName tname = TableName.valueOf(tableName);
 					HTableDescriptor htd = new HTableDescriptor(tname);
-					
+
 					//加列族
 					for(int i = 0 ; i < cFamilyName.length ; i++) {
 						//列族
 						HColumnDescriptor hcd = new HColumnDescriptor(cFamilyName[i]);
 						htd.addFamily(hcd);
-						
+
 					}
-					
+
 					//建表
 					this.hbaseAdmin.createTable(htd);
-					
+
 					log.info("Cover HBase Table [ " + tableName + " ] success !");
 				}else {
 					log.info(tableName + " is exit ....... no create table !");
@@ -279,19 +279,19 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 				//开始建表
 				TableName tname = TableName.valueOf(tableName);
 				HTableDescriptor htd = new HTableDescriptor(tname);
-				
+
 				//加列族
 				for(int i = 0 ; i <cFamilyName.length ; i++) {
 					///列族
 					HColumnDescriptor hcd = new HColumnDescriptor(cFamilyName[i]);
 					htd.addFamily(hcd);
 				}
-				
+
 				//建表
 				this.hbaseAdmin.createTable(htd);
-				
+
 				log.info("Create new HBase Table [ " + tableName + " ] success !");
-				
+
 			}
 		} catch (MasterNotRunningException e) {
 			e.printStackTrace();
@@ -302,7 +302,7 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		}
 		log.info("end create table ...");
 	}
-	
+
 	/**
 	 * 添加一行多限定符的数据
 	 * @param tableName
@@ -320,14 +320,14 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		try {
 			List<Put> puts = new ArrayList<Put>();
 			for(String cq :cqAndValue.keySet()) {
-				
-					this._hTableAdmin = new HTable(conf, tableName);
-	
-					Put put = new Put(Bytes.toBytes(rowKey));
-					//写入行中的列块
-					put.add(columnFamily.getBytes(DEFAULT_ENDODING), cq.getBytes(DEFAULT_ENDODING), 
-							cqAndValue.get(cq).toString().getBytes(DEFAULT_ENDODING));
-					puts.add(put);
+
+				this._hTableAdmin = new HTable(conf, tableName);
+
+				Put put = new Put(Bytes.toBytes(rowKey));
+				//写入行中的列块
+				put.add(columnFamily.getBytes(DEFAULT_ENDODING), cq.getBytes(DEFAULT_ENDODING),
+						cqAndValue.get(cq).toString().getBytes(DEFAULT_ENDODING));
+				puts.add(put);
 			}
 			_hTableAdmin.put(puts);
 		} catch (IOException e) {
@@ -337,7 +337,7 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 			this.closeHBaseAdmin("addRowData");
 		}
 	}
-	
+
 	/**
 	 * 根据表名、列族、map来插入数据
 	 * @param tableName
@@ -369,9 +369,9 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 			log.error(e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * 导出hbase数据
 	 * @param tableName
@@ -383,13 +383,13 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 		tableName = HBASE_TABLE_NAMESPACE + ":" + tableName;
 		//获取TableName
 		TableName tablename = TableName.valueOf(tableName);
-		
+
 		try {
 			this._hTableAdmin = new HTable(conf, tableName);
 			Table table = getConnection().getTable(tablename);
 			Scan scan = new Scan();
 			ResultScanner resultScanner = table.getScanner(scan);
-			
+
 			Map<String , String > cellMap = null;
 			//遍历ResultScanner
 			for(Result result : resultScanner) {
@@ -401,74 +401,74 @@ private static Logger log = Logger.getLogger(DBHelperHBase.class);
 					//获得列名
 					String colName = Bytes.toString(cell.getQualifierArray(),
 							cell.getQualifierOffset(),cell.getQualifierLength());
-					
+
 					String columnValue = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
 					cellMap.put(colName, columnValue);
-					
+
 				}
 				resultMap.put(Integer.parseInt(rowKey), cellMap);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
- 		return resultMap;
+		return resultMap;
 	}
-	
-	
+
+
 	public void closeResultScanner(String methodName) {
 		this.resultScanner.close();
 		log.info(methodName  + "(...) :关闭与ResultScanner的连接！");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

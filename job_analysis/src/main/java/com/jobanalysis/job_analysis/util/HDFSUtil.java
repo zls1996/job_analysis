@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.jobanalysis.job_analysis.entity.JobHdfs;
 import com.jobanalysis.job_analysis.entity.JobInfo;
+import com.jobanalysis.job_analysis.entity.JobSalary;
 import com.jobanalysis.job_analysis.entity.ProfeArea;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -30,23 +31,23 @@ import org.springframework.stereotype.Component;
 public class HDFSUtil {
 	//这里的path写成hadoop中core-site.xml中的fs.default.nameֵ
 	public static final String DEFAULT_HDFS_PATH = "hdfs://127.0.0.1:19000";
-	
+
 	private static String hdfsPath = DEFAULT_HDFS_PATH;
 
 	private static final String FILE_SUFFIX = "/part-r-00000";
-	
+
 	private static Configuration conf = new Configuration();
-	
+
 	public static JobConf config() {
 		JobConf jobConf = new JobConf();
 		jobConf.setJobName("hdfsDao");
 		return jobConf;
 	}
-	
+
 	private  FileSystem getFileSystem() throws IOException {
 		return FileSystem.get(URI.create(hdfsPath), conf);
 	}
-	
+
 	/**
 	 * 创建目录
 	 * @param folder
@@ -61,7 +62,7 @@ public class HDFSUtil {
 		}
 		fs.close();
 	}
-	
+
 	/**
 	 * 删除目录或文件
 	 * @param folder
@@ -79,9 +80,9 @@ public class HDFSUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 *遍历目录文件
 	 * @param folder
@@ -97,7 +98,7 @@ public class HDFSUtil {
 		System.out.println("========================================");
 		for(FileStatus status : list) {
 			System.out.printf("name: %s, folder : %s , size : %d\n", status.getPath(), status.isDir(), status.getLen());
-			
+
 		}
 		System.out.println("========================================");
 		fs.close();
@@ -159,9 +160,9 @@ public class HDFSUtil {
 			}
 		}
 		fs.close();
-		
+
 	}
-	
+
 	/**
 	 * 将本地文件复制到HDFS
 	 * @param localPath
@@ -178,9 +179,9 @@ public class HDFSUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
+
 	/**
 	 * 从HDFS目录下载文件到本地
 	 * @param hdfsPath
@@ -191,11 +192,11 @@ public class HDFSUtil {
 		Path path = new Path(hdfsPath);
 		FileSystem fs = getFileSystem();
 		fs.copyToLocalFile(path, new Path(localPath));
-		
+
 		System.out.println("download file from HDFSPath : " + hdfsPath + " to localPath : " + localPath);
 		fs.close();
 	}
-	
+
 	/**
 	 * 查看文件内容
 	 * @param hdfsPath
@@ -207,7 +208,7 @@ public class HDFSUtil {
 		FileSystem fs = getFileSystem();
 		FSDataInputStream fsis = null;
 		System.out.println("cat : "+ hdfsPath);
-		
+
 		OutputStream baos = new ByteArrayOutputStream();
 		String str = null;
 		try {
@@ -219,10 +220,10 @@ public class HDFSUtil {
 			fs.close();
 		}
 		System.out.println(str);
-		
+
 		return str;
 	}
-	
+
 	/**
 	 * 返回给定文件的位置
 	 * @throws IOException
@@ -231,10 +232,10 @@ public class HDFSUtil {
 		String folder  = hdfsPath + "/";
 		String file = "sample.txt";
 		FileSystem fs = FileSystem.get(URI.create(hdfsPath), new Configuration());
-		
+
 		FileStatus status = fs.getFileStatus(new Path(folder + file));
 		BlockLocation[] list = fs.getFileBlockLocations(status, 0, status.getLen());
-		
+
 		System.out.println("File Location : " + folder +file);
 		for(BlockLocation bl : list) {
 			String [] hosts = bl.getHosts();
@@ -243,7 +244,24 @@ public class HDFSUtil {
 			}
 		}
 		fs.close();
-		
+
+	}
+
+	/**
+	 * 判断是否存在hdfs路径
+	 * @param hdfsPath
+	 * @return
+	 */
+	public boolean containsPath(String hdfsPath){
+		FileSystem fs = null;
+		try {
+			fs = getFileSystem();
+			return fs.exists(new Path(DEFAULT_HDFS_PATH + hdfsPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 
 
@@ -430,7 +448,7 @@ public class HDFSUtil {
 
 				//如果该行中包含所给定满足的条件
 				if(lineJobName.contains(jobname) &&
-				lineArea.contains(area) && lineEdu.contains(edu)){
+						lineArea.contains(area) && lineEdu.contains(edu)){
 					//将该行数据封装成JobInfo
 					JobInfo jobInfo = handleLineData2Object(lineContent.split("\t"));
 					resultList.add(jobInfo);
@@ -440,5 +458,38 @@ public class HDFSUtil {
 			e.printStackTrace();
 		}
 		return resultList;
+	}
+
+	/**
+	 * 根据对应的hdfspath来获得对应城市数组的jobSalaryList
+	 * @param hdfsPath
+	 * @param cities
+	 * @return
+	 */
+	public List<JobSalary> getJobSalary(String hdfsPath, String[] cities) {
+		BufferedReader bufferedReader = getBufferedReader(hdfsPath);
+		List<JobSalary> resultList = new ArrayList<>();
+		String lineContent = null;
+		try{
+			while ((lineContent = bufferedReader.readLine()) != null){
+				String[] strArray = lineContent.split("\t");
+				String city = strArray[0];
+				for(String c: cities){
+					//如果城市数组中有元素,则添加该元素
+					if(c.equals(city)){
+						String avgSalary = strArray[4].split(":")[1];
+
+						JobSalary jobSalary = new JobSalary(city, Float.parseFloat(avgSalary));
+						resultList.add(jobSalary);
+						//读取hdfs文件下一行
+						break;
+					}
+				}
+			}
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+		return resultList;
+
 	}
 }

@@ -4,6 +4,7 @@
     <title>登录</title>
     <meta charset="utf-8"/>
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/ip.js"></script>
     <style type="text/css" media="screen">
       body {
         margin:0px;
@@ -135,12 +136,20 @@
         data["username"]=username;
         data["password"]=password;
         $.ajax({
-          "url":"localhost:8080/login",
+          "url":defaultIp+"/login",
           "type":"post",
           "dataType":"json",
           "data":data,
           "success":function(result){
+            console.log(result);
             //show
+            if(result["suc"]==true){
+              sessionStorage.setItem("isLogin","true");
+              sessionStorage.setItem("username",username);
+              window.location.href="index.html";
+            }else{
+              alert(result["msg"]);
+            }
           },
           "error":function(result){
             //console.log("查询失败!");
@@ -152,12 +161,10 @@
   </head>
   <body>
     <div id="container">
-      <!-- Unnamed (矩形) -->
 
       <div id="header" class="header" align="center">         
-           <p><span>社会职位变化分析工具</span></p><p><span>后台管理系统</span></p>        
+           <p><span>社会职位变化分析系统</span></p><p><span>用户登录</span></p>        
       </div>  
-      <!-- Unnamed (组 合) -->
       <div id="panel" align="center">
         <div id="panel_back" align="center">
            <img id="panel_img"  src="images/panel.png"/>

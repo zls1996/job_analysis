@@ -1,5 +1,6 @@
 package com.jobanalysis.job_analysis.service;
 
+import com.jobanalysis.job_analysis.dto.CityJobClassSalaryDto;
 import com.jobanalysis.job_analysis.dto.ProfeJob;
 import com.jobanalysis.job_analysis.dto.ProfessionDto;
 import com.jobanalysis.job_analysis.entity.JobInfo;
@@ -27,4 +28,11 @@ public interface IJobService {
      * @return
      */
     List<ProfeJob> getProfessionJobArea();
+
+    /**
+     * 薪资水平分析
+     * @return
+     * @param cities
+     */
+    List<CityJobClassSalaryDto> analysisSalary(String[] cities);
 }

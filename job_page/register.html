@@ -4,6 +4,7 @@
     <title>注册</title>
     <meta charset="utf-8"/>
     <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/ip.js"></script>
     <style type="text/css" media="screen">
       body {
         margin:0px;
@@ -156,19 +157,27 @@
           alert("请确认密码");
           return;
         }
+        if(password2!=password){
+          alert("两次密码不一致");
+          return;
+        }
         console.log("ok");
         var data={};
         data["username"]=username;
-        data["password"]=password;
-        data["password2"]=password2;
+        data["password"]=password;       
         $.ajax({
-          "url":"localhost:8080/register",
+          "url":defaultIp+"/uregister",
           "type":"post",
           "dataType":"json",
           "data":data,
           "success":function(result){
             //show
-             alert("注册成功!");
+             if(result["suc"]==true){
+              alert(result["msg"]);      
+              window.location.href="login.html";
+            }else{
+              alert(result["msg"]);
+            }
           },
           "error":function(result){
             //console.log("查询失败!");

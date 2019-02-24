@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jobanalysis.job_analysis.dao.JobDao">
     <sql id="columnsWithId">
-        id, job_classify
+        id, job_classify,hdfs_path
     </sql>
 
     <sql id="columnsWithoutId">
-         job_classify
+         job_classify, hdfs_path
     </sql>
 
     <sql id="jobhdfsWithId">
@@ -23,13 +23,6 @@
         FROM  job_sort
     </select>
 
-    <select id="getJobHdfsByProfe" parameterType="java.lang.Integer"
-            resultType="com.jobanalysis.job_analysis.entity.JobHdfs">
-        SELECT <include refid="jobhdfsWithId"></include>
-        FROM job_hdfs
-        WHERE job_classify = #{id}
-    </select>
-
     <select id="getJobIdByProfession" resultType="java.lang.Integer">
         SELECT id
         FROM job_sort
@@ -43,10 +36,31 @@
     </select>
 
     <select id="getJobClassById" resultType="java.lang.String" parameterType="java.lang.Integer">
-        SELECT <include refid="columnsWithoutId"></include>
+        SELECT job_classify
         FROM job_sort
         WHERE id = #{id}
     </select>
+
+    <select id="getHdfsPathById" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT hdfs_path
+        FROM job_sort
+        WHERE id = #{id}
+    </select>
+
+
+
+
+
+
+
+    <select id="getJobHdfsByProfe" parameterType="java.lang.Integer"
+            resultType="com.jobanalysis.job_analysis.entity.JobHdfs">
+        SELECT <include refid="jobhdfsWithId"></include>
+        FROM job_hdfs
+        WHERE job_classify = #{id}
+    </select>
+
+
 
     <insert id="insert" parameterType="com.jobanalysis.job_analysis.entity.JobHdfs">
         INSERT INTO job_hdfs(<include refid="jobhdfsWithoutId"></include> )

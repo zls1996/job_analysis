@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>行业占比分析</title>
+	<script type="text/javascript" src="js/login.js"></script> 
 	<script src="js/echarts.min.js"></script>
 	<script src="js/jquery-2.2.3.min.js"></script>
 	<script src="js/ip.js"></script>
@@ -67,12 +68,12 @@
 				    min: 80,
 				    max: 600,
 				    inRange: {
-				    	colorLightness: [0, 1]
+				    	
 					}
 				},
 				series : [
 					{
-					    name:'访问来源',
+					    name:'职位类别',
 					    type:'pie',
 					    radius : '55%',
 					    center: ['50%', '50%'],
@@ -108,9 +109,9 @@
 				        animationDelay: function (idx) {
 				        	return Math.random() * 200;
 				        }
-				        }
-				    ]
-					};
+				    }
+				]
+			};
 					myChart.setOption(option);
 		}
 	</script>
@@ -138,11 +139,12 @@
 				        "dataType":"json",
 				        "success":function(result){
 				            //show
+				            //bug to fix; error in sort function 
 				            showChart(result);
 				          },
 				        "error":function(result){
 				            console.log(result);
-				            //showChart(data);
+				            showChart(data);
 				            //alert("获取数据失败!");
 				        }
 					});

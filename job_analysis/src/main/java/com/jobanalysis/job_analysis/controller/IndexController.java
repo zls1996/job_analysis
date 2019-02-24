@@ -1,72 +1,49 @@
 package com.jobanalysis.job_analysis.controller;
 
 
+import com.jobanalysis.job_analysis.dto.LoginClass;
+import com.jobanalysis.job_analysis.dto.LoginState;
 import com.jobanalysis.job_analysis.entity.User;
 import com.jobanalysis.job_analysis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
-@Controller
+@RestController
 public class IndexController {
 
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/")
-    public String index() {
-        return "login";
-    }
-
-
-    @RequestMapping("/register")
-    public String register() {
-        return "register";
-    }
-
-    /*
-    @RequestMapping("/login")
-    public String login() {
-        return "login";
-    }
-    */
-
+    /**
+     * 登录
+     * @param username
+     * @param password
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(String username, String password) {
-        User user = userService.findByNameAndPassword(username, password);
-        String str = "";
-        if (user != null) {
-            str = "index";
-        } else {
-            str = "login";
-        }
-        return str;
+    public LoginClass login(String username, String password, HttpServletResponse response) {
+        LoginState loginState = userService.findByNameAndPassword(username, password, response);
+
+        return new LoginClass(loginState);
     }
 
+    /**
+     * 注册
+     * @param request
+     * @param username
+     * @param password
+     * @param response
+     * @return
+     */
     @RequestMapping("/uregister")
-    public String register(HttpServletRequest request) {
-        User user;
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String password2 = request.getParameter("password2");
-        String str = "";
-        if (password.equals(password2)) {
-            user = userService.findByNameAndPassword(username, password);
-            if (user == null) {
-                User userOne = new User();
-                userOne.setUserName(username);
-                userOne.setPassword(password);
-                userService.save(userOne);
-                str="login";
-            } else {
-                str = "register";
-            }
-        }
-        return str;
-
+    public LoginClass register(HttpServletRequest request,String username, String password, HttpServletResponse response) {
+        LoginClass loginClass = userService.save(new User(username, password));
+        return loginClass;
     }
 
 

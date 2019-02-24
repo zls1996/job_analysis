@@ -32,12 +32,7 @@ public class JobAnalysisApplicationTests {
 
     @Test
     public void contextLoads() throws IOException {
-        hdfsUtil.mkdir("/design");
-        hdfsUtil.mkdir("/production");
-        hdfsUtil.mkdir("/sale");
-        hdfsUtil.mkdir("/tech");
-        hdfsUtil.mkdir("/yunying");
-        hdfsUtil.mkdir("/zhineng");
+        hdfsUtil.mkdir("/test");
 
     }
 

@@ -51,4 +51,11 @@ public interface JobDao {
      * @param jobHdfs
      */
     void insert(JobHdfs jobHdfs);
+
+    /**
+     * 根据id来获取对应职位分类的hdfs路径
+     * @param id
+     * @return
+     */
+    String getHdfsPathById(Integer id);
 }

@@ -234,6 +234,10 @@ a {
   background-size: 100px 100px;
   background-image: url("../images/job.png");
  }
+ .site-service-item .icon_file {
+  background-size: 100px 100px;
+  background-image: url("../images/file.png");
+ }
  .site-service-item .icon_search {
   background-size: 100px 100px;
   background-image: url("../images/search_job.png");

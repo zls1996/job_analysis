@@ -1,20 +1,21 @@
 package com.jobanalysis.job_analysis.service.impl;
 
 import com.jobanalysis.job_analysis.dao.JobDao;
+import com.jobanalysis.job_analysis.dto.CityJobClassSalaryDto;
 import com.jobanalysis.job_analysis.dto.ProfeJob;
 import com.jobanalysis.job_analysis.dto.ProfessionDto;
 import com.jobanalysis.job_analysis.entity.JobHdfs;
 import com.jobanalysis.job_analysis.entity.JobInfo;
+import com.jobanalysis.job_analysis.entity.JobSalary;
 import com.jobanalysis.job_analysis.entity.ProfeArea;
+import com.jobanalysis.job_analysis.mapreduce.areaSalary.JobSubmitter;
 import com.jobanalysis.job_analysis.service.IJobService;
 import com.jobanalysis.job_analysis.util.HDFSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created By 朱立松 on 2019/2/19
@@ -27,6 +28,9 @@ public class JobServiceImpl implements IJobService {
 
     @Autowired
     private JobDao jobDao;
+
+    @Autowired
+    private JobSubmitter jobSubmitter;
 
 
     /**
@@ -60,6 +64,10 @@ public class JobServiceImpl implements IJobService {
         return null;
     }
 
+    /**
+     * 职位分析
+     * @return
+     */
     @Override
     public List<ProfessionDto> professionAnalysis() {
         //得到professionList
@@ -144,5 +152,41 @@ public class JobServiceImpl implements IJobService {
         return list;
 
 
+    }
+
+    /**
+     * 对特定城市的薪资水平分析
+     * @return
+     * @param cities
+     */
+    @Override
+    public List<CityJobClassSalaryDto> analysisSalary(String[] cities) {
+        String mapReducePath = "/salary_mapReduce";
+        //得到所有职位分类的id
+        List<Integer> professionList = jobDao.getProfessionIds();
+        List<CityJobClassSalaryDto> resultList = new ArrayList<>();
+        if(professionList != null && professionList.size() != 0){
+            for(Integer sortId : professionList){
+                //根据id获取对应hdfs路径
+                String job_hdfs = jobDao.getHdfsPathById(sortId);
+                List<JobSalary> jobSalaryList = new ArrayList<>();
+                //如果存在该hdfs路径，表示已经进行过mapreduce计算
+                String hdfsPath = mapReducePath+"/" + job_hdfs;
+                if(! hdfsUtil.containsPath(hdfsPath)){
+                    //未进行过hdfs运算，则进行mapreduce
+                    jobSubmitter.createMapReduceJob(job_hdfs+"/*/part-r-00000",hdfsPath);
+                }
+                //根据hdfsPath来获得jobSalaryList
+                jobSalaryList = hdfsUtil.getJobSalary(hdfsPath, cities);
+
+                //获得职位分类
+                String jobSort = jobDao.getJobClassById(sortId);
+
+                resultList.add(new CityJobClassSalaryDto(jobSort, jobSalaryList));
+
+            }
+
+        }
+        return resultList;
     }
 }

@@ -38,27 +38,27 @@ public class HBase2HDFSUtil {
 	private HDFSUtil hdfsUtil;
 
 	private static Configuration conf = HBaseConfiguration.create();
-	
+
 	//HBase表的命名空间
 	private final static String HBASE_TABLE_NAMESPACE = "hbase_tb";
-	
-	
+
+
 	@SuppressWarnings("unused")
 	private static final String BYTES_ENCODING = "UTF-8";
-	
+
 	static {
 		//设置zookeeper
 		conf.set("hbase.zookeeper.quorum", "127.0.0.1:2181");
 		//设置hdfs存储路径
 		conf.set("fs.defaultFS", "hdfs://127.0.0.1:19000");
 	}
-	
+
 	private static class TableMap extends TableMapper<Text,Text> {
 
 
 		@Override
 		protected void map(ImmutableBytesWritable key, Result value,
-				Mapper<ImmutableBytesWritable, Result, Text, Text>.Context context)
+						   Mapper<ImmutableBytesWritable, Result, Text, Text>.Context context)
 				throws IOException, InterruptedException {
 			//这里的key就是hbase的rowkey
 			@SuppressWarnings("unused")
@@ -70,16 +70,16 @@ public class HBase2HDFSUtil {
 				//获得列名
 				String colName = Bytes.toString(cell.getQualifierArray(),
 						cell.getQualifierOffset(),cell.getQualifierLength());
-				
+
 				String columnValue = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
 				sb.append(colName).append(":").append(columnValue).append("\t");
 			}
 			context.write(new Text(key.get()), new Text(sb.toString()));
 		}
-		
+
 	}
-	
-	
+
+
 	private static class HDFSReducer extends Reducer<IntWritable, Text, IntWritable, Text>{
 		private Text result = new Text();
 
@@ -91,11 +91,11 @@ public class HBase2HDFSUtil {
 				context.write(key, val);
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	  *   将hbase数据传递到hdfs
+	 *   将hbase数据传递到hdfs
 	 * @param tableName : hbase表名
 	 * @param hdfsFileName： hdfs文件名
 	 * @param description：job描述
@@ -103,13 +103,13 @@ public class HBase2HDFSUtil {
 	public void transferFromHBase2HDFS(String tableName, String hdfsFilePath ,String hdfsFileName , String description) {
 		createJob(tableName,hdfsFilePath, hdfsFileName, description);
 	}
-	
+
 	/**
 	 * 初始化Job
-	 * @param tableName 
+	 * @param tableName
 	 * @param hdfsFilePath
 	 * @param description
-	 * @param hdfsFileName 
+	 * @param hdfsFileName
 	 */
 
 	private  void createJob(String tableName,String hdfsFilePath, String hdfsFileName , String description) {
@@ -123,11 +123,11 @@ public class HBase2HDFSUtil {
 					Text.class,Text.class, job, false);
 
 			String realHDFSFilePath =  hdfsFilePath + "/" + hdfsFileName;
-			
+
 			Path outPath = new Path(realHDFSFilePath);
-			
+
 			FileSystem.get(conf).delete(outPath, true);
-			
+
 			FileOutputFormat.setOutputPath(job, outPath);
 
 			job.waitForCompletion(true);
@@ -137,16 +137,14 @@ public class HBase2HDFSUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 
 
 
 }
-		
-			
-		
-	
-	
-	
-	
+
+
+
+
+
 
